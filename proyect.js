@@ -2,6 +2,25 @@
  * PROYECTO DEL CURSO
  * Creación del backend de una plataforma de de educación en linea basado en POO en JavaScript
  */
+class Comment {
+    constructor( {
+        content,
+        studentName,
+        studentRole = "estudiante"
+    } ) {
+        this.content = content;
+        this.studentName = studentName;
+        this.studentRole = studentRole;
+        this.likes = 0;
+    }
+
+    publicar(  ) {
+        console.log( this.studentName = " (" + this.studentRole + ")" );
+        console.log( this.likes + " likes" );
+        console.log( this.content );
+    }
+}
+
 // Creación de nuestras clase
 class Course {
     constructor({
@@ -9,11 +28,15 @@ class Course {
         name,
         teacher,
         lessons = [],
+        isFree = false,
+        lang = "spanish"
     }) {
         this.id = id;
         this.name = name;
         this.teacher = teacher;
         this.lessons = lessons;
+        this.isFree = isFree;
+        this.lang = lang;
     }
 }
 class LearningPath {
@@ -64,12 +87,73 @@ class Students{
         this.approvedCourses = approvedCourses;
         this.learningPaths = learningPaths;
     }
+
+    publicarComentario( commentContent ) {
+        const comment = new Comment( {
+            content: commentContent,
+            studentName: this.name
+        } );
+
+        comment.publicar(  );
+    }
 }
+// Herencia de la clase Student
+class FreeStudent extends Student {
+    constructor( props ) {
+        super( props );
+    }
+    approvedCourses( newCourse ) {
+        if( newCourse.isFree ) {
+            this.approvedCourses.push( newCourse );
+        } else {
+            console.warn("No es un curso gratis");
+        }
+    }
+}
+class BasicStudent extends Student {
+    constructor( props ) {
+        super( props );
+    }
+    approvedCourses( newCourse ) {
+        if( newCourse.lang !== "english" ) {
+            this.approvedCourses.push( newCourse );
+        } else {
+            console.warn("No puedes tomar cursos en inglés");
+        }
+    }
+}
+class ExpertStudent extends Student {
+    constructor( props ) {
+        super( props );
+    }
+    approvedCourses( newCourse ) {
+        this.approvedCourses.push( newCourse );
+    }
+}
+class TeacherStudent extends Student {
+    constructor( props ) {
+        super( props );
+    }
+    approvedCourses( newCourse ) {
+        this.approvedCourses.push( newCourse );
+    }
+    publicarComentario( commentContent ) {
+        const comment = new Comment( {
+            content: commentContent,
+            studentName: this.name,
+            studentRole: "profesor"
+        } );
+
+        comment.publicar(  );
+    }
+}
+
 // Instancias Courses
 const cursoPrograBasica = new Course( { 
     id: 'programacion-basica', 
     name: 'Curso de Programación Básica', 
     teacher: 'Freddy Vega',
+    isFree: true
 } );
 const cursoBasicoJs = new Course( { 
     id: 'basico-javascript', 
@@ -84,7 +168,8 @@ teacher: 'Orlando Naipes'
 const cursoReactNativeBasico = new Course( {
     id: 'react-native-basico',
     name: 'Curso de React Native Básico',
-    teacher: 'Orlando Naipes'
+    teacher: 'Orlando Naipes',
+    lang: "english"
 } );
 // Instancias LearningPath
 const javaScriptLearningPath = new LearningPath( {
@@ -105,7 +190,7 @@ const reactNativeLearningPath = new LearningPath( {
     ]
 } );
 // Instancias Students
-const juan = new Students( {
+const juan = new FreeStudent( {
     name: "JuanDC",
     username: "juandc",
     email: "juanito@juanito.com",
@@ -114,7 +199,7 @@ const juan = new Students( {
         javaScriptLearningPath
     ]
 } );
-const cecilia = new Students( {
+const cecilia = new BasicStudent( {
     name: "Cecilia GG",
     username: "cecigg",
     email: "ceci@ceci.com",
@@ -122,4 +207,10 @@ const cecilia = new Students( {
     learningPaths : [
         reactNativeLearningPath
     ]
+} );
+const freddy = new TeacherStudent( {
+    name: "Freddy Vega",
+    username: "freddier",
+    email: "f@vega.com",
+    twitter: "freddier"
 } );
